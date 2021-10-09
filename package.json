@@ -7,7 +7,7 @@
     "dev": "nodemon server.mjs",
     "seed": "npx sequelize db:seed:all",
     "seed-undo": "npx sequelize db:seed:undo:all",
-    "build": "node server.mjs"
+    "start": "node server.mjs"
   },
   "repository": {
     "type": "git",
