@@ -1,5 +1,4 @@
 import express from 'express';
-import Sequelize from 'sequelize';
 import {} from 'dotenv/config';
 
 import restaurantOpeningTime from './routes/openTiming.mjs' 
@@ -11,7 +10,7 @@ app.get('/', (req, res) => {
 });
 
 // GET: List all restaurants that are open at a certain datetime 
-app.use('/api/get-open-time', restaurantOpeningTime);
+app.use('/api', restaurantOpeningTime);
 
 
 app.listen(process.env.LOCAL || process.env.PORT);

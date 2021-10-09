@@ -4,12 +4,12 @@ import Sequelize from 'sequelize';
 const Op = Sequelize.Op
 
 const getRestaurantOpeningTime = async (req, res) => {
-  const {key: userKey} = req.params;
-  const {openHour, closeHour} = req.query;
-  console.log('USER KEY -> ', userKey);
+  // const {key: userKey} = req.params;
+  const {openHour, closeHour, key} = req.query;
+  // console.log('USER KEY -> ', userKey);
 
   //  AUTHENTICATE USER
-  if (!userKey || userKey !== 'apiKey') {
+  if (!key || key !== 'apiKey') {
     return res.status(401).send('YOU ARE NOT ALLOWED HERE. GET A KEY FIRST')
   };
 
@@ -51,4 +51,38 @@ const getRestaurantOpeningTime = async (req, res) => {
   });
 };
 
-export default getRestaurantOpeningTime;
+// NEED NUMoFrESTAURANTS, DISH AND PRICE
+const getRestaurantsAndDishes = async (req, res) => {
+  const {restaurants, dish, price} = req.query;
+   const data = await db.Menu.findAll({
+    include: {
+      model: db.Restaurant,
+    },
+    attributes: [ 'dish', 'price', 'restaurant.name'],
+    where: {
+      dish: {
+        [Op.like]: `${dish}%`,
+      }
+    }
+  }); 
+  const lists = [];
+  data.forEach(result => {
+    const details = {};
+    const restaurantDetails = result.restaurant.dataValues
+    details.dishName = result.dish;
+    details.price = result.price;
+    details.restaurantName = restaurantDetails.name;
+    details.restaurantID = restaurantDetails.id;
+    lists.push(details)
+  })
+
+  res.status(200).json({
+    message: `top ${restaurants} restaurants that have dishes like '${dish}' priced within $${price}`,
+    data: lists
+  })
+}
+
+export { 
+  getRestaurantOpeningTime,
+  getRestaurantsAndDishes
+};
