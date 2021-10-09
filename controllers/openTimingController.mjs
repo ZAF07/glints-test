@@ -2,7 +2,7 @@ import db from '../model/models/index.mjs'
 import Sequelize from 'sequelize';
 
 const Op = Sequelize.Op
-
+// NEEDS openHour, closeHour and key
 const getRestaurantOpeningTime = async (req, res) => {
   // const {key: userKey} = req.params;
   const {openHour, closeHour, key} = req.query;
@@ -51,9 +51,16 @@ const getRestaurantOpeningTime = async (req, res) => {
   });
 };
 
-// NEED NUMoFrESTAURANTS, DISH AND PRICE
+// NEED NUMoFrESTAURANTS, DISH, PRICE AND KEY
 const getRestaurantsAndDishes = async (req, res) => {
-  const {restaurants, dish, price} = req.query;
+
+  const {restaurants, dish, price, key} = req.query;
+
+  //  AUTHENTICATE USER
+  if (!key || key !== 'apiKey') {
+    return res.status(401).send('YOU ARE NOT ALLOWED HERE. GET A KEY FIRST')
+  };
+
    const data = await db.Menu.findAll({
     include: {
       model: db.Restaurant,
@@ -81,8 +88,41 @@ const getRestaurantsAndDishes = async (req, res) => {
     data: lists
   })
 }
+//  NEEDS TYPE OF SEARCH AND NAME
+const getRestaurantsOrDishes = async (req, res) => {
+  const {type, name} = req.query;
+  let data;
+  switch (type) {
+    case 'restaurant':
+       data = await db.Restaurant.findAll({
+        attributes: [ 'name', 'id',],
+        where: {
+          name: {
+            [Op.like]: `${name}%`,
+          }
+        }
+      });
+      break;
+      case 'dish':
+        data = await db.Menu.findAll({
+          attributes: [ 'dish', 'id', 'price'],
+          where: {
+            dish: {
+              [Op.like]: `${name}%`,
+            }
+          }
+        }); 
+        break;
+  
+    default:
+      res.status(404).send('Please make sure your URI is in correct order🚦')
+      break;
+  }
+  res.send(data)
+}
 
 export { 
   getRestaurantOpeningTime,
-  getRestaurantsAndDishes
+  getRestaurantsAndDishes,
+  getRestaurantsOrDishes
 };
