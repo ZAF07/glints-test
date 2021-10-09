@@ -2,11 +2,15 @@ import db from '../model/models/index.mjs'
 import Sequelize from 'sequelize';
 
 const Op = Sequelize.Op
-// NEEDS openHour, closeHour and key
+/**
+ * Gets list of restaurants open at a certain time
+ * @param {req.query} openHour Earliest opening time of restaurant
+ * @param {req.query} closeHour Latest closing time of restaurant
+ * @param {req.query} key Personal API key
+ * @returns {Array} List of restaurant names and opening times
+ */
 const getRestaurantOpeningTime = async (req, res) => {
-  // const {key: userKey} = req.params;
   const {openHour, closeHour, key} = req.query;
-  // console.log('USER KEY -> ', userKey);
 
   //  AUTHENTICATE USER
   if (!key || key !== 'apiKey') {
@@ -66,7 +70,14 @@ const getRestaurantOpeningTime = async (req, res) => {
   }
 };
 
-// NEED NUMoFrESTAURANTS, DISH, PRICE AND KEY
+/**
+ * Gets list of restaurants open at a certain time
+ * @param {req.query} restaurants Number of restaurants
+ * @param {req.query} dish Name of dish to find
+ * @param {req.query} price Maximum price amount of dish
+ * @param {req.query} key Personal API key
+ * @returns {Array} List of X number of restaurant names and dishes with thier prices
+ */
 const getRestaurantsAndDishes = async (req, res) => {
 
   const {restaurants, dish, price, key} = req.query;
@@ -129,7 +140,14 @@ const getRestaurantsAndDishes = async (req, res) => {
   }
 
 }
-//  NEEDS TYPE OF SEARCH AND NAME
+
+/**
+ * Gets list of restaurants OR Dishes
+ * @param {req.query} type Type of search ( restaurants OR dish)
+ * @param {req.query} name Name of restaurants OR dish to match
+ * @param {req.query} key Personal API key
+ * @returns {Array} List of restaurants and their names or dishes and their prices
+ */
 const getRestaurantsOrDishes = async (req, res) => {
   const {type, name, key} = req.query;
   let data;
@@ -194,7 +212,14 @@ const getRestaurantsOrDishes = async (req, res) => {
 
 }
 
-// NEEDS DISHID, USERID, RESTAURANTID
+/**
+ * POST REQUEST
+ * Processes a user purchasing a dish from a restaurant
+ * @param {req.body} restId ID of restaurants
+ * @param {req.body} dishId ID of dish purchased
+ * @param {req.query} userId ID of user purchasing dish
+ * @returns Success or failure depending on transaction
+ */
 const processPurchase = async (req, res) => {
   const {dishId, restId, userId} = req.body;
   console.log(dishId, restId, userId);
@@ -274,7 +299,7 @@ const processPurchase = async (req, res) => {
   } catch (error) {
     
     res.status(500).json({
-      msg: 'ERROR FROM UPDATE PURCHASE -> ',
+      msg: 'Please check that this is post request. Also check that arguments given are valid ',
       error
 
     })
