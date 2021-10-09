@@ -141,9 +141,10 @@ const getRestaurantsOrDishes = async (req, res) => {
       case 'restaurant':
          data = await db.Restaurant.findAll({
           attributes: [ 'name', 'id',],
+          order: ['name'],
           where: {
             name: {
-              [Op.like]: `${name}%`,
+              [Op.like]: { [Op.any]: [`${name}%`, `%${name}`, `%${name}%`]},
             }
           }
         });
@@ -153,15 +154,19 @@ const getRestaurantsOrDishes = async (req, res) => {
             attributes: [ 'dish', 'id', 'price'],
             where: {
               dish: {
-                [Op.like]: `${name}%`,
-              }
-            }
+                [Op.like]: { [Op.any]: [`${name}%`, `%${name}`, `%${name}%`]},
+              },
+            },
+  
           }); 
           break;
     
       default:
         res.status(404).send('Please make sure your URI is in correct order🚦')
         break;
+    }
+    if (!data.length) {
+      return res.status(200).send('No results found')
     }
     res.status(200).json({
       message: 'Get restaurant or dishes',
