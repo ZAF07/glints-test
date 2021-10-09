@@ -1,5 +1,5 @@
 const getUserDetails = (arr) => {
-  console.log('SINGLE USER RAN******************');
+  // console.log('SINGLE USER RAN******************');
   // console.log(arr[0]);
   const users = arr;
   const userDetails = [];
