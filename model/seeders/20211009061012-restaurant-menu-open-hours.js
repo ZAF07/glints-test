@@ -13,15 +13,12 @@ module.exports = {
       restaurantFile,
       { returning: true }
       );
-      // console.log('RESTAURANTS RETURNED =-> ', restaurantsSeeded);
 
       const timeSeed = [];
       const menuSeed = [];
       
       // RESTAURANTS
     for (let i = 0; i < restaurantsSeeded.length; i += 1) {
-      // console.log('REST ID -> ', restaurantFile[i].id);
-      // const restId = restaurantFile[i].id;
       // GET RESTAURANT ID
       const restaurant_id = restaurantsSeeded[i].id
 
@@ -39,11 +36,8 @@ module.exports = {
       }
     };
 
-    // console.log('TIME SEEDS -> ', timeSeed);
-
     await queryInterface.bulkInsert('opening_hours', timeSeed);
     await queryInterface.bulkInsert('menus', menuSeed);
-
 
   },
 
