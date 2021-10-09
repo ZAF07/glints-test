@@ -1,3 +1,8 @@
+/**
+ * 
+ * @param {Array} raw data from json file 
+ * @returns abstracted data specific to filename (purchases data only)
+ */
 const getPurchaseDetails = (arr) => {
   const purchases = arr;
   const purchaseDetails = [];

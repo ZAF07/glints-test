@@ -1,4 +1,8 @@
-//  ABSTRACT NAME AND CASHBALANCE
+/**
+ * 
+ * @param {Array} raw data from json file 
+ * @returns abstracted data specific to filename (restaurant name, and cashBalance only)
+ */
 const getNameAndCashBalance = (arr) => {
     const restaurants = arr;
     const restaurantNameAndCashBalance = [];
@@ -10,5 +14,5 @@ const getNameAndCashBalance = (arr) => {
     })
    return restaurantNameAndCashBalance;
 }
-// export default getNameAndCashBalance;
+
 exports.getNameAndCashBalance = getNameAndCashBalance;

@@ -1,3 +1,8 @@
+/**
+ * 
+ * @param {Array} dataToConvert parsed and formatted data from json file 
+ * @returns {Array} seed formatted data (restaurant table)
+ */
 const convertRestaurantSeed = (dataToConvert) => {
 
   const restaurantsSeed = [];

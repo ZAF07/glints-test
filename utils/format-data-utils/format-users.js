@@ -1,6 +1,9 @@
+/**
+ * 
+ * @param {Array} arr  parsed data from json file 
+ * @returns {Array} abstracted data specific to filename (user name and cashBalance only)
+ */
 const getUserDetails = (arr) => {
-  // console.log('SINGLE USER RAN******************');
-  // console.log(arr[0]);
   const users = arr;
   const userDetails = [];
 

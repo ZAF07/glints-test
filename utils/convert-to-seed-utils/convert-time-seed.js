@@ -1,5 +1,9 @@
+/**
+ * 
+ * @param {Array} dataToConvert parsed and formatted data from json file 
+ * @returns {Array} seed formatted data (opening_hours table)
+ */
 const convertTimeSeed = async (fileData) => {
-
   const timeSeeders = [];
   for (let i = 0; i < fileData.length; i += 1) {
     const oneRestaurantOpenHours = [];

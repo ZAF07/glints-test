@@ -1,3 +1,8 @@
+/**
+ * 
+ * @param {Array} dataToConvert parsed and formatted data from json file 
+ * @returns {Array} seed formatted data (menu table)
+ */
 const convertMenuSeed = (dataToConvert) => {
   const menuSeeders = [];
   for (let i = 0; i < dataToConvert.length; i += 1) {

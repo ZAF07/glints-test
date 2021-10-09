@@ -1,3 +1,8 @@
+/**
+ * 
+ * @param {Array} arr  parsed data from json file 
+ * @returns {Array} abstracted data specific to filename (menus only)
+ */
 const getDishes = (arr) => {
   const restaurants = arr;
   const menuForEachRest = [];
