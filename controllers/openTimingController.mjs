@@ -13,42 +13,57 @@ const getRestaurantOpeningTime = async (req, res) => {
     return res.status(401).send('YOU ARE NOT ALLOWED HERE. GET A KEY FIRST')
   };
 
-  // QUERY DB
-  const data = await db.OpeningHour.findAll({
-    include: {
-      model: db.Restaurant,
-    },
-    attributes: [ 'openingTime', 'closingTime', 'day', 'openHours'],
-    where: {
-      openingTime: {
-        [Op.between]: [`${openHour}`, `${closeHour}`],
+    // CHECK THAT DETAILS NEEDED WERE GIVEN
+  if (!openHour || !closeHour) {
+    return res.status(400).json({
+      message: 'Please make sure you have given the proper details'
+    })
+  }
+
+  try {
+    
+    // QUERY DB
+    const data = await db.OpeningHour.findAll({
+      include: {
+        model: db.Restaurant,
+      },
+      attributes: [ 'openingTime', 'closingTime', 'day', 'openHours'],
+      where: {
+        openingTime: {
+          [Op.between]: [`${openHour}`, `${closeHour}`],
+        }
       }
-    }
-  });
-
-  const a = data;
-  // console.log(a[0].restaurant);
-  const opening = (a.dataValues);
-  const trim = [];
-  a.forEach(open => {
-    const details = {};
-    const currentRestaurant = open.restaurant.dataValues;
-    details.openHours = open.openHours;
-    details.openingTime = open.openingTime;
-    details.closingTime = open.closingTime;
-    details.day = open.day;
-    details.restaurantName = currentRestaurant.name;
-    details.restaurantID = currentRestaurant.id;
-    trim.push(details);
-    // trim.push(open.dataValues);
-
-  });
-  console.log('TRIMMED DATA -> ', trim[8])
-
-  res.status(200).json({
-    message: `Restaurants open between ${openHour} and ${closeHour}`,
-    data: trim
-  });
+    });
+  
+    const a = data;
+    // console.log(a[0].restaurant);
+    const opening = (a.dataValues);
+    const trim = [];
+    a.forEach(open => {
+      const details = {};
+      const currentRestaurant = open.restaurant.dataValues;
+      details.openHours = open.openHours;
+      details.openingTime = open.openingTime;
+      details.closingTime = open.closingTime;
+      details.day = open.day;
+      details.restaurantName = currentRestaurant.name;
+      details.restaurantID = currentRestaurant.id;
+      trim.push(details);
+      // trim.push(open.dataValues);
+  
+    });
+    // console.log('TRIMMED DATA -> ', trim[8])
+  
+    res.status(200).json({
+      message: `Restaurants open between ${openHour} and ${closeHour}`,
+      data: trim
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'We are facing some issues. Come back in 5 😬',
+      error
+    })
+  }
 };
 
 // NEED NUMoFrESTAURANTS, DISH, PRICE AND KEY
@@ -61,64 +76,106 @@ const getRestaurantsAndDishes = async (req, res) => {
     return res.status(401).send('YOU ARE NOT ALLOWED HERE. GET A KEY FIRST')
   };
 
-   const data = await db.Menu.findAll({
-    include: {
-      model: db.Restaurant,
-    },
-    attributes: [ 'dish', 'price', 'restaurant.name'],
-    where: {
-      dish: {
-        [Op.like]: `${dish}%`,
-      }
-    }
-  }); 
-  const lists = [];
-  data.forEach(result => {
-    const details = {};
-    const restaurantDetails = result.restaurant.dataValues
-    details.dishName = result.dish;
-    details.price = result.price;
-    details.restaurantName = restaurantDetails.name;
-    details.restaurantID = restaurantDetails.id;
-    lists.push(details)
-  })
+  // CHECK THAT DETAILS NEEDED WERE GIVEN
+  if (!restaurants || !dish || !price) {
+    return res.status(400).json({
+      message: 'Please make sure you have given the proper details'
+    })
+  }
 
-  res.status(200).json({
-    message: `top ${restaurants} restaurants that have dishes like '${dish}' priced within $${price}`,
-    data: lists
-  })
+  try {
+    
+    const data = await db.Menu.findAll({
+     include: {
+       model: db.Restaurant,
+     },
+     attributes: [ 'dish', 'price', 'restaurant.name'],
+     where: {
+       dish: {
+         [Op.like]: `${dish}%`,
+       }
+     }
+   }); 
+   const lists = [];
+   data.forEach(result => {
+     const details = {};
+     const restaurantDetails = result.restaurant.dataValues
+     details.dishName = result.dish;
+     details.price = result.price;
+     details.restaurantName = restaurantDetails.name;
+     details.restaurantID = restaurantDetails.id;
+     lists.push(details)
+   })
+  
+   res.status(200).json({
+     message: `top ${restaurants} restaurants that have dishes like '${dish}' priced within $${price}`,
+     data: lists
+   })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Something went wrong. We will come back as soon as we can! 😲'
+    })
+  }
+
 }
 //  NEEDS TYPE OF SEARCH AND NAME
 const getRestaurantsOrDishes = async (req, res) => {
-  const {type, name} = req.query;
+  const {type, name, key} = req.query;
   let data;
-  switch (type) {
-    case 'restaurant':
-       data = await db.Restaurant.findAll({
-        attributes: [ 'name', 'id',],
-        where: {
-          name: {
-            [Op.like]: `${name}%`,
-          }
-        }
-      });
-      break;
-      case 'dish':
-        data = await db.Menu.findAll({
-          attributes: [ 'dish', 'id', 'price'],
+
+  //  AUTHENTICATE USER
+  if (!key || key !== 'apiKey') {
+    return res.status(401).send('YOU ARE NOT ALLOWED HERE. GET A KEY FIRST 🔑')
+  };
+
+  // CHECK THAT DETAILS NEEDED WERE GIVEN
+  if (!type || !name) {
+    return res.status(400).json({
+      message: 'Please make sure you have given the proper details'
+    })
+  }
+
+  try {
+    
+    switch (type) {
+      case 'restaurant':
+         data = await db.Restaurant.findAll({
+          attributes: [ 'name', 'id',],
           where: {
-            dish: {
+            name: {
               [Op.like]: `${name}%`,
             }
           }
-        }); 
+        });
         break;
-  
-    default:
-      res.status(404).send('Please make sure your URI is in correct order🚦')
-      break;
+        case 'dish':
+          data = await db.Menu.findAll({
+            attributes: [ 'dish', 'id', 'price'],
+            where: {
+              dish: {
+                [Op.like]: `${name}%`,
+              }
+            }
+          }); 
+          break;
+    
+      default:
+        res.status(404).send('Please make sure your URI is in correct order🚦')
+        break;
+    }
+    res.status(200).json({
+      message: 'Get restaurant or dishes',
+      data
+    })
+  } catch (error) {
+   
+    res.status(500).json({
+      message: 'We are facing some issue. We will come back fast! Promise 🤞',
+      error
+    })
+
   }
-  res.send(data)
+
 }
 
 // NEEDS DISHID, USERID, RESTAURANTID
@@ -199,9 +256,12 @@ const processPurchase = async (req, res) => {
     console.log('USER CASH BALANCE -> ', updateUserCashBalance);
     res.status(200).send('Success!');
   } catch (error) {
-    if (error) {
-      console.error('ERROR FROM UPDATE PURCHASE -> ', error);
-    }
+    
+    res.status(500).json({
+      msg: 'ERROR FROM UPDATE PURCHASE -> ',
+      error
+
+    })
   }
 
 }
