@@ -1,5 +1,6 @@
 import sequelizePackage from 'sequelize';
 import allConfig from '../config/config.js';
+import url from 'url';
 
 import initRestaurantModel from './Restaurant.mjs';
 import initOpeningHourModel from './OpeningHour.mjs';
