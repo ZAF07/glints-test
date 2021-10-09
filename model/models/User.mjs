@@ -1,4 +1,4 @@
-export default function initMenuModel(sequelize, DataTypes) {
+export default function initUserModel(sequelize, DataTypes) {
   return sequelize.define(
     'user',
     {

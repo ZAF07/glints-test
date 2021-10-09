@@ -121,8 +121,94 @@ const getRestaurantsOrDishes = async (req, res) => {
   res.send(data)
 }
 
+// NEEDS DISHID, USERID, RESTAURANTID
+const processPurchase = async (req, res) => {
+  const {dishId, restId, userId} = req.body;
+  console.log(dishId, restId, userId);
+  
+  const dishID = parseInt(dishId);
+  const restID = parseInt(restId);
+  const userID = parseInt(userId);
+
+  let restaurantCashBalance;
+  let dishPrice;
+  let userCashBalance;
+
+  try {
+    
+    //  get dish amount
+      const dishAmount = await db.Menu.findOne({
+      attributes: ['price', 'restaurantId'],
+      where: {
+        id: {
+          [Op.eq]: `${dishID}`,
+        }
+      }
+    });
+    const dishDetails = dishAmount.dataValues;
+    dishPrice = parseInt(dishDetails.price);
+  
+    console.log('DISH PRICE-> ', dishPrice);
+  
+    // get user amount
+      const userBalance = await db.User.findAll({
+      attributes: [ 'name', 'cashBalance', 'id'],
+      where: {
+        id: {
+          [Op.eq]: `${userID}`,
+        }
+      }
+    });
+    const userDetails = userBalance[0].dataValues;
+    userCashBalance = parseInt(userDetails.cashBalance);
+    console.log('UserBalance -> ', userCashBalance);
+  
+    //  get restaurant balance
+    const restaurantBalance = await db.Restaurant.findOne({
+      attributes: ['cashBalance', 'id', ],
+      where: {
+        id: {
+          [Op.eq]: `${restID}`,
+        }
+      }
+    })
+    const restaurantDetails = restaurantBalance.dataValues;
+    restaurantCashBalance = parseInt(restaurantDetails.cashBalance);
+    console.log('RESTAURANT BALANCE -> ', restaurantCashBalance);
+  
+  
+  
+    // update restaurant balance
+    // add restaurantAmount + dishAmount
+    const restAmtAfterSale = Number(+restaurantCashBalance + +dishPrice);
+    const updateRestaurant = await db.Restaurant.update({cashBalance: restAmtAfterSale}, {
+      where: {
+        id: `${restId}`,
+      }
+    });
+    console.log('UPODATE ===-> ', updateRestaurant);
+  
+    //  update user balance
+    // subtract userAmount - dishAmount
+    const userAmtAfterSale = userCashBalance - dishPrice;
+    const updateUserCashBalance = await db.User.update({cashBalance: userAmtAfterSale}, {
+      where: {
+        id: `${userId}` 
+      }
+    });
+    console.log('USER CASH BALANCE -> ', updateUserCashBalance);
+    res.status(200).send('Success!');
+  } catch (error) {
+    if (error) {
+      console.error('ERROR FROM UPDATE PURCHASE -> ', error);
+    }
+  }
+
+}
+
 export { 
   getRestaurantOpeningTime,
   getRestaurantsAndDishes,
-  getRestaurantsOrDishes
+  getRestaurantsOrDishes,
+  processPurchase
 };

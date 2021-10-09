@@ -4,6 +4,7 @@ import allConfig from '../config/config.js';
 import initRestaurantModel from './Restaurant.mjs';
 import initOpeningHourModel from './OpeningHour.mjs';
 import initMenuModel from './Menu.mjs';
+import initUserModel from './User.mjs';
 
 const { Sequelize } = sequelizePackage;
 const env = process.env.NODE_ENV || 'development';
@@ -17,6 +18,9 @@ db.Restaurant = initRestaurantModel(sequelize, Sequelize.DataTypes);
 db.OpeningHour = initOpeningHourModel(sequelize, Sequelize.DataTypes);
 db.Menu = initMenuModel(sequelize, Sequelize.DataTypes);
 db.sequelize = sequelize
+
+// USERS
+db.User = initUserModel(sequelize, Sequelize.DataTypes);
 
 db.OpeningHour.belongsTo(db.Restaurant);
 db.Menu.belongsTo(db.Restaurant);
