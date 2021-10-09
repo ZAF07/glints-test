@@ -86,6 +86,7 @@ const getRestaurantsAndDishes = async (req, res) => {
   try {
     
     const data = await db.Menu.findAll({
+      limit: parseInt(restaurants),
      include: {
        model: db.Restaurant,
      },
@@ -93,10 +94,15 @@ const getRestaurantsAndDishes = async (req, res) => {
      where: {
        dish: {
          [Op.like]: `${dish}%`,
-       }
+       },
+       [Op.or]: [{
+         price: {
+           [Op.between]: [0, `${price}`],
+         }
+       }],
      }
    }); 
-   const lists = [];
+   const results = [];
    data.forEach(result => {
      const details = {};
      const restaurantDetails = result.restaurant.dataValues
@@ -104,12 +110,17 @@ const getRestaurantsAndDishes = async (req, res) => {
      details.price = result.price;
      details.restaurantName = restaurantDetails.name;
      details.restaurantID = restaurantDetails.id;
-     lists.push(details)
+     results.push(details)
    })
   
+  //  check if no results found
+   if (!results.length) {
+     return res.status(200).send('No results found');
+   }
+
    res.status(200).json({
      message: `top ${restaurants} restaurants that have dishes like '${dish}' priced within $${price}`,
-     data: lists
+     data: results
    })
   } catch (error) {
     res.status(500).json({
