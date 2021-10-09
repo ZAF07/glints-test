@@ -5,7 +5,7 @@ import {
   getRestaurantsAndDishes,
   getRestaurantsOrDishes,
   processPurchase
-} from '../controllers/openTimingController.mjs';
+} from '../controllers/apiControllers.mjs';
 
 const router = express.Router();
 
