@@ -1,15 +1,10 @@
 import express from 'express';
-import db from './model/models/index.mjs'
 import Sequelize from 'sequelize';
 import {} from 'dotenv/config';
-
-const Op = Sequelize.Op;
 
 import restaurantOpeningTime from './routes/openTiming.mjs' 
 
 const app = express()
-
-
 
 app.get('/', (req, res) => {
   res.send('hello')
