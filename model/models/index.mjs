@@ -13,6 +13,8 @@ const config = allConfig[env];
 const db = {};
 // console.log('CONFIG -> ', config);
 
+let sequelize;
+
 if (env === 'production') {
   // Break apart the Heroku database url and rebuild the configs we need
   const { DATABASE_URL } = process.env;
@@ -28,9 +30,16 @@ if (env === 'production') {
   config.host = host;
   config.port = port;
   sequelize = new Sequelize(dbName, username, password, config);
+} else {
+  sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  config
+);
 }
 
-let sequelize = new Sequelize(config);
+// let sequelize = new Sequelize(config);
 
 db.Restaurant = initRestaurantModel(sequelize, Sequelize.DataTypes);
 db.OpeningHour = initOpeningHourModel(sequelize, Sequelize.DataTypes);
