@@ -78,11 +78,11 @@ describe('GETS FILE FROM GIVEN JSON FILE AND TRANSFORMS IT INTO SEED READY FORMA
     it('Each Menu object has required properties to seed data', async () => {
       const results = await getData(file, 'menu');
   
-      // represents single restaurant ( has up to 7 opening days)
+      // represents single restaurant menu
       for (let i = 0; i < results.length; i += 1) {
         const currentRestaurantTiming = results[i];
   
-        // represents individual days
+        // represents each menu item
         for (let j = 0; j < currentRestaurantTiming.length; j += 1) {
           expect(currentRestaurantTiming[j]).to.have.keys('dish', 'price', 'created_at', 'updated_at')
   
