@@ -7,7 +7,8 @@
     "dev": "nodemon server.mjs",
     "seed": "npx sequelize db:seed:all",
     "seed-undo": "npx sequelize db:seed:undo:all",
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -21,8 +22,10 @@
   },
   "homepage": "https://github.com/ZAF07/glints-test#readme",
   "dependencies": {
+    "chai": "^4.3.4",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "mocha": "^9.1.2",
     "moment": "^2.29.1",
     "pg": "^8.7.1",
     "sequelize": "^6.6.5",

@@ -101,7 +101,7 @@ const stripAccessLetters = (arr) => {
       }
 
     })
-    individualRestaurant.push(singleRestaurant)
+    individualRestaurants.push(singleRestaurant)
 
   })
 
