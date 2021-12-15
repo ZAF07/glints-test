@@ -11,6 +11,8 @@ const Op = Sequelize.Op
  */
 const getRestaurantOpeningTime = async (req, res) => {
   const {openHour, closeHour, key} = req.query;
+  const{ offset,limit } = req.query
+  console.log(offset, limit);
 
   //  AUTHENTICATE USER
   if (!key || key !== 'apiKey') {
@@ -36,7 +38,12 @@ const getRestaurantOpeningTime = async (req, res) => {
         openingTime: {
           [Op.between]: [`${openHour}`, `${closeHour}`],
         }
-      }
+      },
+      offset: `${offset}`,
+      limit: `${limit}`,
+      order: [
+        ["openingTime", "desc"]
+      ]
     });
   
     const a = data;
